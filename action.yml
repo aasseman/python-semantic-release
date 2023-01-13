@@ -35,6 +35,25 @@ inputs:
   ssh_private_signing_key:
     description: 'The ssh private key used to sign commits'
     required: false
+outputs:
+  current_release_version:
+    description: 'Current release version.'
+  current_release_major_version:
+    description: Current release major version.'
+  current_release_minor_version:
+    description: Current release minor version.'
+  current_release_patch_version:
+    description: Current release patch version.'
+  new_release_published:
+    description: '"true" if a new release was published, else "false".'
+  new_release_version:
+    description: 'Newly created release version.'
+  new_release_major_version:
+    description: 'Newly created release major version.'
+  new_release_minor_version:
+    description: 'Newly created release minor version.'
+  new_release_patch_version:
+    description: 'Newly created release patch version.'
 
 runs:
   using: 'docker'

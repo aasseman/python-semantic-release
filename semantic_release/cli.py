@@ -7,6 +7,7 @@ from pathlib import Path
 
 import click
 import click_log
+import semver
 
 from semantic_release import ci_checks
 from semantic_release.errors import GitError, ImproperConfigurationError
@@ -318,6 +319,11 @@ def publish(
         f"Current version: {current_version}, Current release version: {current_release_version}"
     )
 
+    print(f"::set-output name=current_release_version::{current_release_version}")
+    print(f"::set-output name=current_release_major_version::{semver.VersionInfo.parse(current_release_version).major}")
+    print(f"::set-output name=current_release_minor_version::{semver.VersionInfo.parse(current_release_version).minor}")
+    print(f"::set-output name=current_release_patch_version::{semver.VersionInfo.parse(current_release_version).patch}")
+
     verbose = logger.isEnabledFor(logging.DEBUG)
     if retry:
         logger.info("Retry is on")
@@ -382,6 +388,13 @@ def publish(
             domain=get_domain(),
         )
 
+        # At this point a new version got released on GitHub, so we can set the outputs
+        print("::set-output name=new_release_published::true")
+        print(f"::set-output name=new_release_version::{new_version}")
+        print(f"::set-output name=new_release_major_version::{semver.VersionInfo.parse(new_version).major}")
+        print(f"::set-output name=new_release_minor_version::{semver.VersionInfo.parse(new_version).minor}")
+        print(f"::set-output name=new_release_patch_version::{semver.VersionInfo.parse(new_version).patch}")
+
         # Get config options for uploads
         dist_path = config.get("dist_path")
         upload_release = config.get("upload_to_release")
@@ -427,6 +440,8 @@ def publish(
         logger.info("Publish has finished")
 
     # else: Since version shows a message on failure, we do not need to print another.
+    else:
+        print("::set-output name=new_release_published::false")
 
 
 def filter_output_for_secrets(message):
